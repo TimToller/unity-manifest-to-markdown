@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/unity-manifest-to-markdown/static/css/main.74331c80.css",
-    "main.js": "/unity-manifest-to-markdown/static/js/main.43792c35.js",
+    "main.css": "/unity-manifest-to-markdown/static/css/main.ca8a5aed.css",
+    "main.js": "/unity-manifest-to-markdown/static/js/main.1670313e.js",
     "static/js/787.73cbea83.chunk.js": "/unity-manifest-to-markdown/static/js/787.73cbea83.chunk.js",
     "index.html": "/unity-manifest-to-markdown/index.html",
-    "main.74331c80.css.map": "/unity-manifest-to-markdown/static/css/main.74331c80.css.map",
-    "main.43792c35.js.map": "/unity-manifest-to-markdown/static/js/main.43792c35.js.map",
+    "main.ca8a5aed.css.map": "/unity-manifest-to-markdown/static/css/main.ca8a5aed.css.map",
+    "main.1670313e.js.map": "/unity-manifest-to-markdown/static/js/main.1670313e.js.map",
     "787.73cbea83.chunk.js.map": "/unity-manifest-to-markdown/static/js/787.73cbea83.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.74331c80.css",
-    "static/js/main.43792c35.js"
+    "static/css/main.ca8a5aed.css",
+    "static/js/main.1670313e.js"
   ]
 }
