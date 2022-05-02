@@ -21,7 +21,7 @@ import { tomorrowNightBlue } from "react-syntax-highlighter/dist/esm/styles/hljs
 
 const OutputDisplay = (props: { manifest: any }) => {
 	const { manifest } = props;
-	const headers = ["Package Name", "Publisher", "Version"];
+	const headers = ["Package", "Publisher", "Version"];
 	const [data, setData] = useState<
 		{ name: string; publisher: string; version: any }[]
 	>([]);
@@ -32,6 +32,7 @@ const OutputDisplay = (props: { manifest: any }) => {
 		setMarkdown(convertManifestToMarkdown(manifest));
 	}, [manifest, includeBuiltIn]);
 
+	//const url = `https://cors-anywhere.herokuapp.com/https://packages.unity.com/${packageId}`;
 	const convertManifestToMarkdown = (manifest: any) => {
 		let { dependencies } = manifest;
 		if (!dependencies) return "";
