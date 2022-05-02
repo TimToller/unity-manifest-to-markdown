@@ -3,7 +3,9 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Button,
+	FormControlLabel,
 	Paper,
+	Switch,
 	Table,
 	TableBody,
 	TableCell,
@@ -12,7 +14,7 @@ import {
 	TableRow,
 	Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNightBlue } from "react-syntax-highlighter/dist/esm/styles/hljs";
@@ -20,32 +22,54 @@ import { tomorrowNightBlue } from "react-syntax-highlighter/dist/esm/styles/hljs
 const OutputDisplay = (props: { manifest: any }) => {
 	const { manifest } = props;
 	const headers = ["Package Name", "Publisher", "Version"];
+	const [data, setData] = useState<
+		{ name: string; publisher: string; version: any }[]
+	>([]);
+	const [markdown, setMarkdown] = useState<string>("");
+	const [includeBuiltIn, setIncludeBuiltIn] = useState<boolean>(false);
+
+	useEffect(() => {
+		setMarkdown(convertManifestToMarkdown(manifest));
+	}, [manifest, includeBuiltIn]);
 
 	const convertManifestToMarkdown = (manifest: any) => {
 		let { dependencies } = manifest;
+		if (!dependencies) return "";
+		let newData = Object.keys(dependencies).map((key) => ({
+			name: key.split(".").slice(2).join("."),
+			publisher: key.split(".").slice(1, 2).join("."),
+			version: dependencies[key],
+		}));
+		if (!includeBuiltIn)
+			newData = newData.filter(
+				(e) => e.name.split(".")[0] !== "modules" || e.publisher !== "unity"
+			);
+
+		setData(newData);
+
 		let markdown = "";
 		markdown += `| ${headers.join(" | ")} |\n|:---:|:---:|:---:|\n`;
-		for (const key in dependencies) {
-			if (dependencies.hasOwnProperty(key)) {
-				const version = dependencies[key];
-				let row = [];
-				let packageID = key.split(".");
-				//package name
-				row.push(packageID.slice(2).join("."));
-				//publisher
-				row.push(packageID.slice(0, 2).join("."));
-				//version
-				row.push(version);
-
-				markdown += `| ${row.join(" | ")} |\n`;
-			}
-		}
+		newData.forEach((row) => {
+			markdown += `| ${row.name} | ${row.publisher} | ${row.version} |\n`;
+		});
 		return markdown;
 	};
-	const markdown = convertManifestToMarkdown(manifest);
 
 	return props.manifest.dependencies ? (
 		<div className="contentBody">
+			<FormControlLabel
+				className="switchBuiltIn"
+				control={
+					<Switch
+						size="medium"
+						checked={includeBuiltIn}
+						onChange={() => {
+							setIncludeBuiltIn(!includeBuiltIn);
+						}}
+					/>
+				}
+				label="Include Unity built in Packages"
+			/>
 			<Button
 				variant="contained"
 				className="copyButton"
@@ -56,7 +80,12 @@ const OutputDisplay = (props: { manifest: any }) => {
 				Copy Markdown
 			</Button>
 			<div className="previewTable">
-				{/* <TableContainer component={Paper}>
+				<Accordion>
+					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+						<Typography>Preview Table</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<TableContainer component={Paper}>
 							<Table sx={{ minWidth: 650 }} aria-label="simple table">
 								<TableHead>
 									<TableRow>
@@ -66,7 +95,7 @@ const OutputDisplay = (props: { manifest: any }) => {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{rows.map((row) => (
+									{data.map((row: any) => (
 										<TableRow
 											key={row.name}
 											sx={{
@@ -75,15 +104,15 @@ const OutputDisplay = (props: { manifest: any }) => {
 											<TableCell component="th" scope="row">
 												{row.name}
 											</TableCell>
-											<TableCell align="right">{row.calories}</TableCell>
-											<TableCell align="right">{row.fat}</TableCell>
-											<TableCell align="right">{row.carbs}</TableCell>
-											<TableCell align="right">{row.protein}</TableCell>
+											<TableCell>{row.publisher}</TableCell>
+											<TableCell>{row.version}</TableCell>
 										</TableRow>
 									))}
 								</TableBody>
 							</Table>
-						</TableContainer> */}
+						</TableContainer>
+					</AccordionDetails>
+				</Accordion>
 			</div>
 			<div className="previewData">
 				<Accordion>
