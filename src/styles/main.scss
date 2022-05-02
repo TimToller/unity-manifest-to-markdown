@@ -1,8 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap");
 $textColor: #ffffff;
+$backgroundColor: rgb(39, 39, 39);
+$blue: #00548b80;
+
 .App {
-	background-color: rgb(39, 39, 39);
-	height: 100vh;
+	background-color: $backgroundColor;
+	min-height: 100vh;
+	height: 100%;
 }
 .mainTop {
 	display: flex;
@@ -27,7 +31,7 @@ $textColor: #ffffff;
 }
 
 .dropZone {
-	background-color: rgba(0, 84, 139, 0.5);
+	background-color: $blue;
 	border-radius: 15px;
 	border-style: dashed;
 	border-color: lightblue;
@@ -42,7 +46,10 @@ $textColor: #ffffff;
 		height: 100%;
 	}
 }
-.previewJSON {
-	margin-left: 20px;
-	margin-right: 20px;
+.previewData {
+	margin: 20px;
+}
+.codeBlock {
+	background: $blue !important;
+	border-radius: 10px;
 }

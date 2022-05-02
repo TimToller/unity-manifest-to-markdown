@@ -1,4 +1,5 @@
 import React from "react";
+import UploadFileIcon from '@mui/icons-material/UploadFile';Copyor Ctrl + C
 const DropZone = (props: { stateChanger: any }) => {
 	function handleDrop(e: any) {
 		e.preventDefault();
@@ -24,7 +25,10 @@ const DropZone = (props: { stateChanger: any }) => {
 				event.stopPropagation();
 				event.preventDefault();
 			}}>
-			<div>Drop your manifest.json file here!</div>
+			<div>
+				Drop your manifest.json file here!
+				<UploadFileIcon />
+			</div>
 		</div>
 	);
 };
