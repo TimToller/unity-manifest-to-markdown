@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./styles/main.scss";
-import { createTheme, ThemeProvider, Typography } from "@mui/material";
+import { createTheme, Link, ThemeProvider, Typography } from "@mui/material";
 import DropZone from "./Components/DropZone";
 import OutputDisplay from "./Components/OutputDisplay";
 import blue from "@mui/material/colors/blue";
@@ -27,17 +27,27 @@ function App() {
 							variant="subtitle1"
 							className="subtitleBar"
 							align="center">
-							Open your Unity project's manifest.json file and copy the JSON
-							into the text area below.
+							Go to your Unity Project, open the <span>Packages</span> Folder
+							and drag and drop the <span>manifest.json</span> file here.
 						</Typography>
 					</div>
 					<div>
 						<DropZone stateChanger={setManifest} />
 					</div>
 				</div>
-				<div className="contentBody">
-					<OutputDisplay manifest={manifest} />
-				</div>
+
+				<OutputDisplay manifest={manifest} />
+				<footer>
+					<Typography variant="subtitle1" align="center">
+						Made with ❤️ by{" "}
+						<Link
+							href="https://github.com/timtoller"
+							underline="hover"
+							target={"_blank"}>
+							Tim Toller
+						</Link>
+					</Typography>
+				</footer>
 			</div>
 		</ThemeProvider>
 	);

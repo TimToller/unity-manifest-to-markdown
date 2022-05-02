@@ -2,6 +2,7 @@
 $textColor: #ffffff;
 $backgroundColor: rgb(39, 39, 39);
 $blue: #00548b80;
+$darkBlue: rgba(0, 83, 139, 0.157);
 
 .App {
 	background-color: $backgroundColor;
@@ -28,16 +29,29 @@ $blue: #00548b80;
 .subtitleBar {
 	color: $textColor;
 	font-family: "Source Sans Pro", sans-serif;
+	> span {
+		font-weight: bold;
+		background-color: $blue;
+		border-radius: 10px;
+		padding: 0.2rem;
+		padding-left: 0.4rem;
+		padding-right: 0.4rem;
+	}
 }
 
 .dropZone {
 	background-color: $blue;
 	border-radius: 15px;
 	border-style: dashed;
-	border-color: lightblue;
+	border-color: rgb(173, 216, 230, 0);
 	width: 100%;
 	height: 100%;
+	transition: border-color 0.2s ease;
+	&:hover {
+		cursor: pointer;
+	}
 	&.hovering {
+		border-color: rgb(173, 216, 230, 1);
 		.dropText {
 			font-size: 2rem;
 		}
@@ -57,10 +71,23 @@ $blue: #00548b80;
 		}
 	}
 }
-.previewData {
-	margin: 20px;
-}
+
 .codeBlock {
-	background: $blue !important;
+	background: $darkBlue !important;
 	border-radius: 10px;
+}
+.contentBody {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	.previewData,
+	.copyButton {
+		margin: 20px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.copyButton {
+		align-self: center;
+		width: 50%;
+	}
 }

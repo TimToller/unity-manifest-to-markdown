@@ -2,6 +2,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Button,
 	Paper,
 	Table,
 	TableBody,
@@ -43,12 +44,19 @@ const OutputDisplay = (props: { manifest: any }) => {
 	};
 	const markdown = convertManifestToMarkdown(manifest);
 
-	return (
-		<div>
-			{props.manifest.dependencies && (
-				<div>
-					<div className="previewTable">
-						{/* <TableContainer component={Paper}>
+	return props.manifest.dependencies ? (
+		<div className="contentBody">
+			<Button
+				variant="contained"
+				className="copyButton"
+				size="large"
+				onClick={() => {
+					navigator.clipboard.writeText(markdown);
+				}}>
+				Copy Markdown
+			</Button>
+			<div className="previewTable">
+				{/* <TableContainer component={Paper}>
 							<Table sx={{ minWidth: 650 }} aria-label="simple table">
 								<TableHead>
 									<TableRow>
@@ -76,41 +84,45 @@ const OutputDisplay = (props: { manifest: any }) => {
 								</TableBody>
 							</Table>
 						</TableContainer> */}
-					</div>
-					<div className="previewData">
-						<Accordion>
-							<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-								<Typography>Preview Markdown</Typography>
-							</AccordionSummary>
-							<AccordionDetails>
-								<SyntaxHighlighter
-									language="markdown"
-									className="codeBlock"
-									style={tomorrowNightBlue}
-									showLineNumbers={false}>
-									{markdown}
-								</SyntaxHighlighter>
-							</AccordionDetails>
-						</Accordion>
-					</div>
-					<div className="previewData">
-						<Accordion>
-							<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-								<Typography>Preview JSON</Typography>
-							</AccordionSummary>
-							<AccordionDetails>
-								<SyntaxHighlighter
-									className="codeBlock"
-									language="json"
-									style={tomorrowNightBlue}
-									showLineNumbers={false}>
-									{JSON.stringify(manifest, null, 2)}
-								</SyntaxHighlighter>
-							</AccordionDetails>
-						</Accordion>
-					</div>
-				</div>
-			)}
+			</div>
+			<div className="previewData">
+				<Accordion>
+					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+						<Typography>Preview Markdown</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<SyntaxHighlighter
+							language="markdown"
+							className="codeBlock"
+							style={tomorrowNightBlue}
+							showLineNumbers={false}>
+							{markdown}
+						</SyntaxHighlighter>
+					</AccordionDetails>
+				</Accordion>
+			</div>
+			<div className="previewData">
+				<Accordion>
+					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+						<Typography>Preview JSON</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<SyntaxHighlighter
+							className="codeBlock"
+							language="json"
+							style={tomorrowNightBlue}
+							showLineNumbers={false}>
+							{JSON.stringify(manifest, null, 2)}
+						</SyntaxHighlighter>
+					</AccordionDetails>
+				</Accordion>
+			</div>
+		</div>
+	) : (
+		<div className="contentBody">
+			<Typography variant="h6" align="center">
+				Add a manifest file to get started!
+			</Typography>
 		</div>
 	);
 };
