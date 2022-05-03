@@ -26,6 +26,11 @@ function App() {
 							variant="subtitle1"
 							className="subtitleBar"
 							align="center">
+							Tired of having to go into your Package Manager and writing each
+							package you have in your Unity project into a different file?
+							Tired of having a basic list that doesn't look cool? This Tool can
+							help!
+							<br />
 							Go to your Unity Project, open the <span>Packages</span> Folder
 							and drag and drop the <span>manifest.json</span> file here.
 						</Typography>

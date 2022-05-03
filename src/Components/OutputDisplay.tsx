@@ -3,8 +3,12 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Button,
+	FormControl,
 	FormControlLabel,
+	InputLabel,
+	MenuItem,
 	Paper,
+	Select,
 	Switch,
 	Table,
 	TableBody,
@@ -34,10 +38,11 @@ const OutputDisplay = (props: { manifest: any }) => {
 	const [data, setData] = useState([]);
 	const [markdown, setMarkdown] = useState<string>("");
 	const [includeBuiltIn, setIncludeBuiltIn] = useState<boolean>(false);
+	const [align, setAlign] = useState<"center" | "left" | "right">("left");
 
 	useEffect(() => {
 		convertManifestToMarkdown(manifest);
-	}, [manifest, includeBuiltIn]);
+	}, [manifest, includeBuiltIn, align]);
 
 	const convertManifestToMarkdown = (manifest: any) => {
 		let { dependencies } = manifest;
@@ -87,7 +92,9 @@ const OutputDisplay = (props: { manifest: any }) => {
 			);
 
 			let markdown = "";
-			markdown += `| ${headers.join(" | ")} |\n|:---:|:---:|:---:|\n`;
+			markdown += `| ${headers.join(" | ")} |\n${`|${
+				align === "center" || align === "left" ? ":" : ""
+			}---${align === "center" || align === "right" ? ":" : ""}`.repeat(3)}|\n`;
 			newData.forEach((row: dependency) => {
 				markdown += `| ${row.name} | ${row.id} | ${row.version} |\n`;
 			});
@@ -110,6 +117,19 @@ const OutputDisplay = (props: { manifest: any }) => {
 				}
 				label="Include Built-in packages (Don't appear in Package Manager, but in manifest)"
 			/>
+			<FormControl className="alignSelect">
+				<InputLabel>Align</InputLabel>
+				<Select
+					value={align}
+					label="Align"
+					onChange={(e) =>
+						setAlign(e.target.value as "center" | "left" | "right")
+					}>
+					<MenuItem value={"left"}>Left</MenuItem>
+					<MenuItem value={"center"}>Center</MenuItem>
+					<MenuItem value={"right"}>Right</MenuItem>
+				</Select>
+			</FormControl>
 			<Button
 				variant="contained"
 				className="copyButton"
@@ -130,7 +150,9 @@ const OutputDisplay = (props: { manifest: any }) => {
 								<TableHead>
 									<TableRow>
 										{headers.map((header) => (
-											<TableCell key={header}>{header}</TableCell>
+											<TableCell key={header} align={align}>
+												{header}
+											</TableCell>
 										))}
 									</TableRow>
 								</TableHead>
@@ -141,11 +163,11 @@ const OutputDisplay = (props: { manifest: any }) => {
 											sx={{
 												"&:last-child td, &:last-child th": { border: 0 },
 											}}>
-											<TableCell component="th" scope="row">
+											<TableCell component="th" scope="row" align={align}>
 												{row.name}
 											</TableCell>
-											<TableCell>{row.id}</TableCell>
-											<TableCell>{row.version}</TableCell>
+											<TableCell align={align}>{row.id}</TableCell>
+											<TableCell align={align}>{row.version}</TableCell>
 										</TableRow>
 									))}
 								</TableBody>
