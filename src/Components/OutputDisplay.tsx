@@ -19,13 +19,19 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNightBlue } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import axios from "axios";
+import builtins from "./builtins.json";
+
+const API = "https://unity-packages-proxy.vercel.app/api/";
+interface dependency {
+	name: string;
+	id: string;
+	version: string;
+}
 
 const OutputDisplay = (props: { manifest: any }) => {
 	const { manifest } = props;
-	const headers = ["Package", "Publisher", "Version"];
-	const [data, setData] = useState<
-		{ name: string; publisher: string; version: any }[]
-	>([]);
+	const headers = ["Package Name", "Package ID", "Version"];
+	const [data, setData] = useState([]);
 	const [markdown, setMarkdown] = useState<string>("");
 	const [includeBuiltIn, setIncludeBuiltIn] = useState<boolean>(false);
 
@@ -36,40 +42,57 @@ const OutputDisplay = (props: { manifest: any }) => {
 	const convertManifestToMarkdown = (manifest: any) => {
 		let { dependencies } = manifest;
 		if (!dependencies) return "";
-		axios
-			.all(
-				Object.keys(dependencies)
-					.filter(
-						(e) =>
-							!e.startsWith("com.unity.modules") &&
-							!e.startsWith("com.unity.ugui")
-					)
-					.map((key) =>
-						axios.get(`https://unity-packages-proxy.vercel.app/api/${key}`)
-					)
-			)
-			.then(
-				axios.spread((...responses) => {
-					let data = responses.map((response) => {
-						let { data } = response;
-						return data;
+		let newData: any = [];
+
+		Object.keys(dependencies).forEach((dep) => {
+			//check built-ins
+			let moduleName = builtins[dep as keyof typeof builtins];
+
+			//ugui is an exception - it's technically not a built in module, but doesn't have an api endpoint
+			//that's why it's in the builtins.json anyway...
+			if (moduleName && (includeBuiltIn || dep === "com.unity.ugui")) {
+				newData.push({
+					name: moduleName,
+					id: dep,
+					version: dependencies[dep],
+				});
+			}
+		});
+
+		Promise.allSettled(
+			Object.keys(dependencies)
+				.filter(
+					(p) =>
+						/^[\.\d\-pre]+$/g.test(dependencies[p]) &&
+						!builtins[p as keyof typeof builtins]
+				)
+				.map((key) => axios.get(`${API}${key}`))
+		).then((results) => {
+			results.forEach((result) => {
+				if (result.status === "fulfilled" && result?.value?.data) {
+					const { data } = result.value;
+					const version = data.versions[dependencies[data.name]];
+					newData.push({
+						name: version.displayName || data.name,
+						id: version.name,
+						version: version.version,
 					});
-					console.log(data);
-				})
+				}
+			});
+
+			setData(
+				newData.sort((a: dependency, b: dependency) =>
+					a.name.localeCompare(b.name)
+				)
 			);
-		// if (!includeBuiltIn)
-		// 	newData = newData.filter(
-		// 		(e) => e.name.split(".")[0] !== "modules" || e.publisher !== "unity"
-		// 	);
 
-		// setData(newData);
-
-		// let markdown = "";
-		// markdown += `| ${headers.join(" | ")} |\n|:---:|:---:|:---:|\n`;
-		// newData.forEach((row) => {
-		// 	markdown += `| ${row.name} | ${row.publisher} | ${row.version} |\n`;
-		// });
-		setMarkdown(markdown);
+			let markdown = "";
+			markdown += `| ${headers.join(" | ")} |\n|:---:|:---:|:---:|\n`;
+			newData.forEach((row: dependency) => {
+				markdown += `| ${row.name} | ${row.id} | ${row.version} |\n`;
+			});
+			setMarkdown(markdown);
+		});
 	};
 
 	return props.manifest.dependencies ? (
@@ -85,7 +108,7 @@ const OutputDisplay = (props: { manifest: any }) => {
 						}}
 					/>
 				}
-				label="Include Unity built in Packages"
+				label="Include Built-in packages (Don't appear in Package Manager, but in manifest)"
 			/>
 			<Button
 				variant="contained"
@@ -121,7 +144,7 @@ const OutputDisplay = (props: { manifest: any }) => {
 											<TableCell component="th" scope="row">
 												{row.name}
 											</TableCell>
-											<TableCell>{row.publisher}</TableCell>
+											<TableCell>{row.id}</TableCell>
 											<TableCell>{row.version}</TableCell>
 										</TableRow>
 									))}
