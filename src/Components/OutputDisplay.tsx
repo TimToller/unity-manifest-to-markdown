@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNightBlue } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import axios from "axios";
 
 const OutputDisplay = (props: { manifest: any }) => {
 	const { manifest } = props;
@@ -29,31 +30,46 @@ const OutputDisplay = (props: { manifest: any }) => {
 	const [includeBuiltIn, setIncludeBuiltIn] = useState<boolean>(false);
 
 	useEffect(() => {
-		setMarkdown(convertManifestToMarkdown(manifest));
+		convertManifestToMarkdown(manifest);
 	}, [manifest, includeBuiltIn]);
 
-	//const url = `https://cors-anywhere.herokuapp.com/https://packages.unity.com/${packageId}`;
 	const convertManifestToMarkdown = (manifest: any) => {
 		let { dependencies } = manifest;
 		if (!dependencies) return "";
-		let newData = Object.keys(dependencies).map((key) => ({
-			name: key.split(".").slice(2).join("."),
-			publisher: key.split(".").slice(1, 2).join("."),
-			version: dependencies[key],
-		}));
-		if (!includeBuiltIn)
-			newData = newData.filter(
-				(e) => e.name.split(".")[0] !== "modules" || e.publisher !== "unity"
+		axios
+			.all(
+				Object.keys(dependencies)
+					.filter(
+						(e) =>
+							!e.startsWith("com.unity.modules") &&
+							!e.startsWith("com.unity.ugui")
+					)
+					.map((key) =>
+						axios.get(`https://unity-packages-proxy.vercel.app/api/${key}`)
+					)
+			)
+			.then(
+				axios.spread((...responses) => {
+					let data = responses.map((response) => {
+						let { data } = response;
+						return data;
+					});
+					console.log(data);
+				})
 			);
+		// if (!includeBuiltIn)
+		// 	newData = newData.filter(
+		// 		(e) => e.name.split(".")[0] !== "modules" || e.publisher !== "unity"
+		// 	);
 
-		setData(newData);
+		// setData(newData);
 
-		let markdown = "";
-		markdown += `| ${headers.join(" | ")} |\n|:---:|:---:|:---:|\n`;
-		newData.forEach((row) => {
-			markdown += `| ${row.name} | ${row.publisher} | ${row.version} |\n`;
-		});
-		return markdown;
+		// let markdown = "";
+		// markdown += `| ${headers.join(" | ")} |\n|:---:|:---:|:---:|\n`;
+		// newData.forEach((row) => {
+		// 	markdown += `| ${row.name} | ${row.publisher} | ${row.version} |\n`;
+		// });
+		setMarkdown(markdown);
 	};
 
 	return props.manifest.dependencies ? (
