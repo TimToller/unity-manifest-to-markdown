@@ -15,6 +15,8 @@ $darkBlue: rgba(0, 83, 139, 0.157);
 	height: 30vh;
 	> div {
 		margin: 2rem;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
 		margin-top: 25px;
 		width: 50%;
 	}
@@ -25,6 +27,9 @@ $darkBlue: rgba(0, 83, 139, 0.157);
 	width: 100%;
 	font-family: "Source Sans Pro", sans-serif;
 	font-weight: bold;
+	font-size: 2.5vw;
+	text-align: center;
+	margin: 0px;
 }
 .subtitleBar {
 	color: $textColor;

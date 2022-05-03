@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
 import "./styles/main.scss";
 import { createTheme, Link, ThemeProvider, Typography } from "@mui/material";
 import DropZone from "./Components/DropZone";
@@ -20,9 +19,9 @@ function App() {
 			<div className="App">
 				<div className="mainTop">
 					<div>
-						<Typography variant="h3" className="titleBar" align="center">
+						<h3 className="titleBar">
 							Unity manifest JSON to Markdown table converter
-						</Typography>
+						</h3>
 						<Typography
 							variant="subtitle1"
 							className="subtitleBar"
